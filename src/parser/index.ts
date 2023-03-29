@@ -14,8 +14,11 @@ const createParser = () => {
 	const eat = () => tokens[currentIndex++];
 	const at = () => tokens[currentIndex];
 
-	const reset = (lexer: Token[]) => {
-		tokens = lexer;
+	const peek = (ahead: number) => tokens[currentIndex + ahead];
+
+	const reset = (tkns: Token[]) => {
+		tokens = tkns;
+		currentIndex = 0;
 	};
 
 	const expect = (expected: TokenTypes) => {
@@ -30,18 +33,9 @@ const createParser = () => {
 		throw new SyntaxError(formatError(token || at(), "Unexpected token"));
 	};
 
-	const skipWhitespace = (optionalWS: boolean = true) => {
-		if (optionalWS) {
-			if (at().type !== TokenTypes.WS) {
-				return;
-			}
-		}
+	const skipWhitespace = (optionalWS: boolean = true) => {};
 
-		expect(TokenTypes.WS);
-		eat();
-	};
-
-	return { reset, expect, eat, at, throwUnexpected, skipWhitespace };
+	return { reset, expect, eat, at, throwUnexpected, skipWhitespace, peek };
 };
 
 // global parser
@@ -65,13 +59,54 @@ export const parse = (tokens: Token[]): Program => {
 
 // Order of precedence
 // --
+// Additition
 // Literals
 
 const parseStatement = () => {
-	return parseLiterals();
+	return parseAddition();
 };
 
-const parseLiterals = (): NumberLiteral | null => {
+const parseWS = (optional: boolean = true) => {
+	if (optional) {
+		if (parser.at().type !== TokenTypes.WS) {
+			return;
+		}
+	}
+
+	parser.expect(TokenTypes.WS);
+	parser.eat();
+};
+
+const parseAddition = () => {
+	let left: ASTNode = parseLiteral();
+
+	while (true) {
+		parseWS();
+		// kdyz odstranim tenhle koment tak to prestane fungovat (nechapu)
+		if (parser.at().type !== TokenTypes.BinaryAdditionOperator) {
+			break;
+		}
+
+		const { value: operator } = parser.eat();
+
+		parseWS();
+
+		const op = {
+			type: ASTTypes.BinaryOperation,
+			left: left,
+			right: parseLiteral(),
+			operator,
+		};
+
+		left = op;
+	}
+
+	return left;
+};
+
+const parseLiteral = (): NumberLiteral => {
+	parseWS();
+
 	switch (parser.at().type) {
 		case TokenTypes.Number:
 			const { value } = parser.eat();
@@ -84,5 +119,5 @@ const parseLiterals = (): NumberLiteral | null => {
 			parser.throwUnexpected();
 	}
 
-	return null;
+	throw new Error();
 };

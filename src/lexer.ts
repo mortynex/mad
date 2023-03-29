@@ -1,10 +1,19 @@
 import moo from "npm:moo";
 
+export enum BinaryOperator {
+	Addition = "+",
+	Substraction = "-",
+	Multiplication = "*",
+	Division = "/",
+	Modulo = "%",
+}
+
 export enum TokenTypes {
 	LParen,
 	RParen,
 	Number,
-	BinaryOperator,
+	BinaryAdditionOperator,
+	BinaryMultiplicationOperator,
 	// whitespaces
 	WS,
 	NL,
@@ -25,7 +34,15 @@ const lexer = moo.compile({
 	[TokenTypes.Number]: /0|[1-9][0-9]*/,
 	[TokenTypes.LParen]: "(",
 	[TokenTypes.RParen]: ")",
-	[TokenTypes.BinaryOperator]: ["+", "-"],
+	[TokenTypes.BinaryAdditionOperator]: [
+		BinaryOperator.Addition,
+		BinaryOperator.Substraction,
+	],
+	[TokenTypes.BinaryMultiplicationOperator]: [
+		BinaryOperator.Modulo,
+		BinaryOperator.Multiplication,
+		BinaryOperator.Division,
+	],
 	[TokenTypes.NL]: { match: /\n/, lineBreaks: true },
 	[TokenTypes.NoMatch]: { error: true },
 });
