@@ -1,11 +1,12 @@
 import moo from "npm:moo";
 
-enum TokenTypes {
+export enum TokenTypes {
 	LParen,
 	RParen,
 	Number,
 	BinaryOperator,
 	WS,
+	NoMatch,
 }
 
 export interface Token {
@@ -22,6 +23,7 @@ const lexer = moo.compile({
 	[TokenTypes.RParen]: ")",
 	[TokenTypes.BinaryOperator]: ["+", "-"],
 	NL: { match: /\n/, lineBreaks: true },
+	[TokenTypes.NoMatch]: { error: true },
 });
 
 export const tokenize = (str: string) => {
@@ -38,7 +40,13 @@ export const tokenize = (str: string) => {
 			return nextToken;
 		}
 
-		const { type, value, col, line } = lexer.next();
+		const token = lexer.next();
+
+		const { type, col, value, line } = token;
+
+		if (type === TokenTypes.NoMatch) {
+			throw new SyntaxError(formatError(token, "Invalid syntax"));
+		}
 
 		return {
 			type: Number(type),
@@ -64,3 +72,6 @@ export const tokenize = (str: string) => {
 };
 
 export type tokenizer = ReturnType<typeof tokenize>;
+
+export const formatError: (token: Token, text: string) => string =
+	lexer.formatError;
