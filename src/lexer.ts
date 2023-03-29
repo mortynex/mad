@@ -5,9 +5,12 @@ export enum TokenTypes {
 	RParen,
 	Number,
 	BinaryOperator,
+	// whitespaces
 	WS,
-	NoMatch,
 	NL,
+	// special tokens
+	EOF,
+	NoMatch,
 }
 
 export interface Token {
@@ -30,13 +33,11 @@ const lexer = moo.compile({
 export const tokenize = (str: string) => {
 	lexer.reset(str);
 
-	let prefetchedToken: Token | null = null;
-
 	const transformToken = (token: any) => {
 		const { type, col, value, line } = token;
 
 		if (Number(type) === TokenTypes.NoMatch) {
-			throw new SyntaxError(formatError(token, "Invalid syntax"));
+			throw new SyntaxError(formatError(token, "Invalid syntax")); // TODO: add better error messages
 		}
 
 		return {
@@ -47,36 +48,17 @@ export const tokenize = (str: string) => {
 		};
 	};
 
-	const next = (): Token => {
-		if (prefetchedToken !== null) {
-			const nextToken = prefetchedToken;
+	const tokens = Array.from(lexer).map(transformToken);
 
-			prefetchedToken = null;
+	tokens.push({
+		type: TokenTypes.EOF,
+		value: "<eof>",
+		col: lexer.col,
+		line: lexer.line,
+	});
 
-			return nextToken;
-		}
-
-		const token = lexer.next();
-
-		return transformToken(token);
-	};
-
-	const at = () => {
-		if (prefetchedToken) return prefetchedToken;
-
-		prefetchedToken = next();
-
-		return prefetchedToken;
-	};
-
-	const array = (): Token[] => {
-		return Array.from(lexer).map(transformToken);
-	};
-
-	return { next, array, at };
+	return tokens;
 };
-
-export type tokenizer = ReturnType<typeof tokenize>;
 
 export const formatError: (token: Token, text: string) => string =
 	lexer.formatError.bind(lexer);

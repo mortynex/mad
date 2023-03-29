@@ -1,4 +1,5 @@
 import { tokenize, TokenTypes } from "./lexer.ts";
+import { parse } from "./parser/index.ts";
 const startREPL = (processor: (input: string) => any) => {
 	while (true) {
 		const code = prompt("> ");
@@ -32,8 +33,5 @@ const startREPL = (processor: (input: string) => any) => {
 };
 
 startREPL((code: string) => {
-	return tokenize(code)
-		.array()
-		.map(({ type }) => TokenTypes[type])
-		.join(" _ ");
+	return parse(tokenize(code));
 });
