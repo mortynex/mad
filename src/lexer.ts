@@ -7,6 +7,7 @@ export enum TokenTypes {
 	BinaryOperator,
 	WS,
 	NoMatch,
+	NL,
 }
 
 export interface Token {
@@ -22,7 +23,7 @@ const lexer = moo.compile({
 	[TokenTypes.LParen]: "(",
 	[TokenTypes.RParen]: ")",
 	[TokenTypes.BinaryOperator]: ["+", "-"],
-	NL: { match: /\n/, lineBreaks: true },
+	[TokenTypes.NL]: { match: /\n/, lineBreaks: true },
 	[TokenTypes.NoMatch]: { error: true },
 });
 
@@ -30,6 +31,21 @@ export const tokenize = (str: string) => {
 	lexer.reset(str);
 
 	let prefetchedToken: Token | null = null;
+
+	const transformToken = (token: any) => {
+		const { type, col, value, line } = token;
+
+		if (Number(type) === TokenTypes.NoMatch) {
+			throw new SyntaxError(formatError(token, "Invalid syntax"));
+		}
+
+		return {
+			type: Number(type),
+			value: value,
+			col,
+			line,
+		};
+	};
 
 	const next = (): Token => {
 		if (prefetchedToken !== null) {
@@ -42,18 +58,7 @@ export const tokenize = (str: string) => {
 
 		const token = lexer.next();
 
-		const { type, col, value, line } = token;
-
-		if (type === TokenTypes.NoMatch) {
-			throw new SyntaxError(formatError(token, "Invalid syntax"));
-		}
-
-		return {
-			type: Number(type),
-			value: value,
-			col,
-			line,
-		};
+		return transformToken(token);
 	};
 
 	const at = () => {
@@ -65,7 +70,7 @@ export const tokenize = (str: string) => {
 	};
 
 	const array = (): Token[] => {
-		return Array.from(lexer);
+		return Array.from(lexer).map(transformToken);
 	};
 
 	return { next, array, at };
@@ -74,4 +79,4 @@ export const tokenize = (str: string) => {
 export type tokenizer = ReturnType<typeof tokenize>;
 
 export const formatError: (token: Token, text: string) => string =
-	lexer.formatError;
+	lexer.formatError.bind(lexer);
