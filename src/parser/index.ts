@@ -48,6 +48,15 @@ export const parse = (tokens: Token[]): Program => {
 
 	while (parser.at().type !== TokenTypes.EOF) {
 		body.push(parseStatement());
+
+		if (
+			parser.at().type !== TokenTypes.NL &&
+			parser.at().type !== TokenTypes.EOF
+		) {
+			throw new SyntaxError(
+				formatError(parser.at(), "More than one statement on one line")
+			);
+		}
 	}
 
 	return {

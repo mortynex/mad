@@ -3,7 +3,7 @@ import { tokenize, TokenTypes } from "./lexer.ts";
 import { parse } from "./parser/index.ts";
 const startREPL = (processor: (input: string) => any) => {
 	while (true) {
-		const code = prompt("> ");
+		const code = prompt("-> ");
 
 		if (!code) {
 			continue;
