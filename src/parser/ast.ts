@@ -1,4 +1,4 @@
-import { BinaryOperator } from "../lexer.ts";
+import { BinaryOperator, Token } from "../lexer.ts";
 
 export enum StatementTypes {
 	Program,
@@ -8,6 +8,8 @@ export enum StatementTypes {
 
 export interface Statement {
 	type: StatementTypes;
+	//tokenEnd: Token; TODO: statement error handleing
+	//tokenStart: Token;
 }
 
 export interface Program {

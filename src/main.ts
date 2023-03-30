@@ -1,3 +1,4 @@
+import { evaluate } from "./interpreter/index.ts";
 import { tokenize, TokenTypes } from "./lexer.ts";
 import { parse } from "./parser/index.ts";
 const startREPL = (processor: (input: string) => any) => {
@@ -33,5 +34,5 @@ const startREPL = (processor: (input: string) => any) => {
 };
 
 startREPL((code: string) => {
-	return parse(tokenize(code));
+	return evaluate(parse(tokenize(code))).toString();
 });
