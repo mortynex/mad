@@ -1,29 +1,29 @@
 import { BinaryOperator } from "../lexer.ts";
 
-export enum ASTTypes {
+export enum StatementTypes {
 	Program,
 	NumberLiteral,
 	BinaryOperation,
 }
 
-export interface ASTNode {
-	type: ASTTypes;
+export interface Statement {
+	type: StatementTypes;
 }
 
 export interface Program {
-	type: ASTTypes.Program;
-	body: ASTNode[];
+	type: StatementTypes.Program;
+	body: Statement[];
 }
 
-export interface Expression extends ASTNode {}
+export interface Expression extends Statement {}
 
 export interface NumberLiteral extends Expression {
-	type: ASTTypes.NumberLiteral;
+	type: StatementTypes.NumberLiteral;
 	value: string;
 }
 
 export interface BinaryOperation extends Expression {
-	type: ASTTypes.BinaryOperation;
+	type: StatementTypes.BinaryOperation;
 	left: Expression;
 	right: Expression;
 	operator: BinaryOperator;

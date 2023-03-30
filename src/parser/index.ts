@@ -1,6 +1,6 @@
 import {
-	ASTNode,
-	ASTTypes,
+	Statement,
+	StatementTypes,
 	Expression,
 	NumberLiteral,
 	Program,
@@ -44,14 +44,14 @@ const parser = createParser();
 export const parse = (tokens: Token[]): Program => {
 	parser.reset(tokens);
 
-	const body: (ASTNode | null)[] = [];
+	const body: (Statement | null)[] = [];
 
 	while (parser.at().type !== TokenTypes.EOF) {
 		body.push(parseStatement());
 	}
 
 	return {
-		type: ASTTypes.Program,
+		type: StatementTypes.Program,
 		// @ts-ignore
 		body: body.filter((stmt) => stmt),
 	};
@@ -61,10 +61,10 @@ export const parse = (tokens: Token[]): Program => {
 // --
 // Additition
 // Multiplication
-// Literals
+// Literals and Parenthes
 
 const parseStatement = () => {
-	return parseAddition();
+	return parseExpression();
 };
 
 const parseWS = (optional: boolean = true) => {
@@ -78,8 +78,12 @@ const parseWS = (optional: boolean = true) => {
 	parser.eat();
 };
 
+const parseExpression = () => {
+	return parseAddition();
+};
+
 const parseAddition = () => {
-	let left: ASTNode = parseMultiplication();
+	let left: Statement = parseMultiplication();
 
 	while (true) {
 		parseWS();
@@ -93,7 +97,7 @@ const parseAddition = () => {
 		parseWS();
 
 		const op = {
-			type: ASTTypes.BinaryOperation,
+			type: StatementTypes.BinaryOperation,
 			left: left,
 			right: parseMultiplication(),
 			operator,
@@ -106,7 +110,7 @@ const parseAddition = () => {
 };
 
 const parseMultiplication = () => {
-	let left: ASTNode = parseLiteral();
+	let left: Statement = parseLiteral();
 
 	while (true) {
 		parseWS();
@@ -120,7 +124,7 @@ const parseMultiplication = () => {
 		parseWS();
 
 		const op = {
-			type: ASTTypes.BinaryOperation,
+			type: StatementTypes.BinaryOperation,
 			left: left,
 			right: parseLiteral(),
 			operator,
@@ -132,7 +136,7 @@ const parseMultiplication = () => {
 	return left;
 };
 
-const parseLiteral = (): NumberLiteral => {
+const parseLiteral = () => {
 	parseWS();
 
 	switch (parser.at().type) {
@@ -140,9 +144,20 @@ const parseLiteral = (): NumberLiteral => {
 			const { value } = parser.eat();
 
 			return {
-				type: ASTTypes.NumberLiteral,
+				type: StatementTypes.NumberLiteral,
 				value,
 			};
+
+		case TokenTypes.LParen:
+			parser.eat();
+
+			const body = parseExpression();
+
+			parser.expect(TokenTypes.RParen);
+
+			parser.eat();
+
+			return body;
 		default:
 			parser.throwUnexpected();
 	}
