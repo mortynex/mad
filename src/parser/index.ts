@@ -60,6 +60,7 @@ export const parse = (tokens: Token[]): Program => {
 // Order of precedence
 // --
 // Additition
+// Multiplication
 // Literals
 
 const parseStatement = () => {
@@ -78,12 +79,39 @@ const parseWS = (optional: boolean = true) => {
 };
 
 const parseAddition = () => {
-	let left: ASTNode = parseLiteral();
+	let left: ASTNode = parseMultiplication();
 
 	while (true) {
 		parseWS();
 		// kdyz odstranim tenhle koment tak to prestane fungovat (nechapu)
 		if (parser.at().type !== TokenTypes.BinaryAdditionOperator) {
+			break;
+		}
+
+		const { value: operator } = parser.eat();
+
+		parseWS();
+
+		const op = {
+			type: ASTTypes.BinaryOperation,
+			left: left,
+			right: parseMultiplication(),
+			operator,
+		};
+
+		left = op;
+	}
+
+	return left;
+};
+
+const parseMultiplication = () => {
+	let left: ASTNode = parseLiteral();
+
+	while (true) {
+		parseWS();
+		// kdyz odstranim tenhle koment tak to prestane fungovat (nechapu)
+		if (parser.at().type !== TokenTypes.BinaryMultiplicationOperator) {
 			break;
 		}
 
