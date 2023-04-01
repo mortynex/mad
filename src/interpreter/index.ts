@@ -6,6 +6,7 @@ import {
 	Program,
 	Statement,
 	StatementTypes,
+	VariableAssignment,
 	VariableDeclaration,
 } from "../parser/ast.ts";
 import { createScope, Scope } from "./scope.ts";
@@ -25,6 +26,9 @@ export const evaluate = (stmt: Statement, scope: Scope): Value => {
 		case StatementTypes.VariableDeclaration:
 			return evalVariableDeclaration(stmt as VariableDeclaration, scope);
 
+		case StatementTypes.VariableAssignment:
+			return evalVariableAssignment(stmt as VariableAssignment, scope);
+
 		case StatementTypes.Identifier:
 			return evalIdentifier(stmt as Identifier, scope);
 
@@ -33,12 +37,31 @@ export const evaluate = (stmt: Statement, scope: Scope): Value => {
 	}
 };
 
+const evalVariableAssignment = (
+	{ id, value: expr }: VariableAssignment,
+	scope: Scope
+) => {
+	if (!scope.has(id)) {
+		throw new Error("assignemnt to undeclared variable");
+	}
+
+	const value = evaluate(expr, scope);
+
+	scope.assign(id, value);
+
+	return value;
+};
+
 const evalVariableDeclaration = (
 	{ id, value: expr, variableType }: VariableDeclaration,
 	scope: Scope
 ) => {
+	if (scope.has(id)) {
+		throw new Error("can redeclare a variable");
+	}
+
 	const value = evaluate(expr, scope);
-	console.log(id);
+
 	scope.assign(id, value);
 
 	return value;

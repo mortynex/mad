@@ -41,7 +41,7 @@ startREPL((code: string) => {
 
 	const ast = parse(tokens);
 
-	const result = evalProgram(ast, globalScope, false);
+	const result = evalProgram(ast, globalScope, false).toString();
 
 	return result;
 });

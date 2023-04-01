@@ -93,20 +93,22 @@ const parseStatement = () => {
 			return parseVariableDeclaration();
 
 		case TokenTypes.Identifier:
-			if (parser.peek(1).type === TokenTypes.AssignmentOperator)
-				return parseVariableAssignment();
+			return parseVariableAssignment();
 
 		default:
 			return parseExpression();
 	}
 };
 
-const parseVariableAssignment = (): VariableAssignment => {
+const parseVariableAssignment = (): VariableAssignment | Identifier => {
 	const id = parseIdentifier();
 
 	parseWS(true);
 
-	parser.expect(TokenTypes.AssignmentOperator);
+	if (parser.at().type !== TokenTypes.AssignmentOperator) {
+		return id;
+	}
+
 	parser.eat();
 
 	parseWS(true);
@@ -125,7 +127,7 @@ const parseVariableDeclaration = (): VariableDeclaration => {
 
 	parseWS(false);
 
-	const { id, value } = parseVariableAssignment();
+	const { id, value } = parseVariableAssignment() as VariableAssignment;
 
 	return {
 		type: StatementTypes.VariableDeclaration,
