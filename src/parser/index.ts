@@ -4,8 +4,12 @@ import {
 	Expression,
 	NumberLiteral,
 	Program,
+	VariableAssignment,
+	VariableDeclaration,
+	Identifier,
 } from "./ast.ts";
 import { formatError, Token, TokenTypes } from "../lexer.ts";
+import { ValueTypes } from "../interpreter/values.ts";
 
 const createParser = () => {
 	let tokens: Token[] = [];
@@ -72,10 +76,6 @@ export const parse = (tokens: Token[]): Program => {
 // Multiplication
 // Literals and Parenthes
 
-const parseStatement = () => {
-	return parseExpression();
-};
-
 const parseWS = (optional: boolean = true) => {
 	if (optional) {
 		if (parser.at().type !== TokenTypes.WS) {
@@ -85,6 +85,54 @@ const parseWS = (optional: boolean = true) => {
 
 	parser.expect(TokenTypes.WS);
 	parser.eat();
+};
+
+const parseStatement = () => {
+	switch (parser.at().type) {
+		case TokenTypes.ValueType:
+			return parseVariableDeclaration();
+
+		case TokenTypes.Identifier:
+			if (parser.peek(1).type === TokenTypes.AssignmentOperator)
+				return parseVariableAssignment();
+
+		default:
+			return parseExpression();
+	}
+};
+
+const parseVariableAssignment = (): VariableAssignment => {
+	const id = parseIdentifier();
+
+	parseWS(true);
+
+	parser.expect(TokenTypes.AssignmentOperator);
+	parser.eat();
+
+	parseWS(true);
+
+	const value = parseExpression();
+
+	return {
+		type: StatementTypes.VariableAssignment,
+		id,
+		value,
+	};
+};
+
+const parseVariableDeclaration = (): VariableDeclaration => {
+	const type = parser.eat();
+
+	parseWS(false);
+
+	const { id, value } = parseVariableAssignment();
+
+	return {
+		type: StatementTypes.VariableDeclaration,
+		value,
+		id,
+		variableType: type.value as ValueTypes,
+	};
 };
 
 const parseExpression = () => {
@@ -167,9 +215,23 @@ const parseLiteral = () => {
 			parser.eat();
 
 			return body;
+
+		case TokenTypes.Identifier:
+			return parseIdentifier();
+
 		default:
 			parser.throwUnexpected();
 	}
 
 	throw new Error();
+};
+
+const parseIdentifier = (): Identifier => {
+	parser.expect(TokenTypes.Identifier);
+	const { value: name } = parser.eat();
+
+	return {
+		type: StatementTypes.Identifier,
+		name,
+	};
 };

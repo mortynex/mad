@@ -1,7 +1,7 @@
 import { BinaryOperator } from "../lexer.ts";
 
 export enum ValueTypes {
-	Number = "number",
+	Number = "num",
 }
 
 export abstract class Value {

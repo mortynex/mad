@@ -1,9 +1,13 @@
+import { ValueTypes } from "../interpreter/values.ts";
 import { BinaryOperator, Token } from "../lexer.ts";
 
 export enum StatementTypes {
 	Program,
 	NumberLiteral,
 	BinaryOperation,
+	Identifier,
+	VariableAssignment,
+	VariableDeclaration,
 }
 
 export interface Statement {
@@ -18,6 +22,22 @@ export interface Program {
 }
 
 export interface Expression extends Statement {}
+
+export interface Identifier extends Expression {
+	type: StatementTypes.Identifier;
+	name: string;
+}
+
+export interface VariableAssignment extends Expression {
+	type: StatementTypes.VariableAssignment;
+	id: Identifier;
+	value: Expression;
+}
+
+export interface VariableDeclaration extends Omit<VariableAssignment, "type"> {
+	type: StatementTypes.VariableDeclaration;
+	variableType: ValueTypes;
+}
 
 export interface NumberLiteral extends Expression {
 	type: StatementTypes.NumberLiteral;

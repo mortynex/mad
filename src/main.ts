@@ -1,4 +1,5 @@
-import { evaluate } from "./interpreter/index.ts";
+import { evalProgram, evaluate } from "./interpreter/index.ts";
+import { createScope } from "./interpreter/scope.ts";
 import { tokenize, TokenTypes } from "./lexer.ts";
 import { parse } from "./parser/index.ts";
 const startREPL = (processor: (input: string) => any) => {
@@ -33,6 +34,14 @@ const startREPL = (processor: (input: string) => any) => {
 	}
 };
 
+const globalScope = createScope();
+
 startREPL((code: string) => {
-	return evaluate(parse(tokenize(code))).toString();
+	const tokens = tokenize(code);
+
+	const ast = parse(tokens);
+
+	const result = evalProgram(ast, globalScope, false);
+
+	return result;
 });

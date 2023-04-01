@@ -1,4 +1,5 @@
 import moo from "npm:moo";
+import { ValueTypes } from "./interpreter/values.ts";
 
 export enum BinaryOperator {
 	Addition = "+",
@@ -14,7 +15,10 @@ export enum TokenTypes {
 	Number,
 	BinaryAdditionOperator,
 	BinaryMultiplicationOperator,
-	// whitespaces
+	AssignmentOperator,
+	Identifier,
+	ValueType,
+	// whitespaces\
 	WS,
 	NL,
 	// special tokens
@@ -43,6 +47,13 @@ const lexer = moo.compile({
 		BinaryOperator.Multiplication,
 		BinaryOperator.Division,
 	],
+	[TokenTypes.AssignmentOperator]: "=",
+	[TokenTypes.Identifier]: {
+		match: /[a-zA-Z][\w]*/,
+		type: moo.keywords({
+			[TokenTypes.ValueType]: "num",
+		}),
+	},
 	[TokenTypes.NL]: { match: /\n/, lineBreaks: true },
 	[TokenTypes.NoMatch]: { error: true },
 });
