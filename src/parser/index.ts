@@ -20,6 +20,16 @@ const createParser = () => {
 
 	const peek = (ahead: number) => tokens[currentIndex + ahead];
 
+	const save = () => {
+		return {
+			index: currentIndex,
+		};
+	};
+
+	const restore = (atIndex: { index: number } = { index: 0 }) => {
+		currentIndex = atIndex.index;
+	};
+
 	const reset = (tkns: Token[]) => {
 		tokens = tkns;
 		currentIndex = 0;
@@ -34,12 +44,18 @@ const createParser = () => {
 	};
 
 	const throwUnexpected = (token?: Token) => {
-		throw new SyntaxError(formatError(token || at(), "Unexpected token"));
+		throw new SyntaxError(
+			formatError(
+				token || at(),
+				"Unexpected token expected " +
+					(TokenTypes[token?.type ?? -1] ?? "nothing") +
+					" but instead got " +
+					TokenTypes[at().type]
+			)
+		);
 	};
 
-	const skipWhitespace = (optionalWS: boolean = true) => {};
-
-	return { reset, expect, eat, at, throwUnexpected, skipWhitespace, peek };
+	return { reset, expect, eat, at, throwUnexpected, peek, save, restore };
 };
 
 // global parser
@@ -93,7 +109,22 @@ const parseStatement = () => {
 			return parseVariableDeclaration();
 
 		case TokenTypes.Identifier:
-			return parseVariableAssignment();
+			const state = parser.save();
+
+			parser.eat();
+
+			parseWS(true);
+
+			const nextTokenType = parser.at().type;
+
+			parser.restore(state);
+
+			switch (nextTokenType) {
+				case TokenTypes.AssignmentOperator:
+					return parseVariableAssignment();
+				default:
+					return parseExpression();
+			}
 
 		default:
 			return parseExpression();
