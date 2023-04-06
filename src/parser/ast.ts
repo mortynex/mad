@@ -1,5 +1,5 @@
-import { ValueTypes } from "../interpreter/values.ts";
-import { BinaryOperators, Token } from "../lexer.ts";
+import { BinaryOperators, ValueTypes } from "../interpreter/values.ts";
+import { Token } from "../lexer.ts";
 
 export enum StatementTypes {
 	Program,
@@ -11,10 +11,15 @@ export enum StatementTypes {
 	VariableDeclaration,
 }
 
+export interface StatementLocation {
+	col: number;
+	line: number;
+}
+
 export interface Statement {
 	type: StatementTypes;
-	//tokenEnd: Token; TODO: statement error handleing
-	//tokenStart: Token;
+	end: StatementLocation;
+	start: StatementLocation;
 }
 
 export interface Program {

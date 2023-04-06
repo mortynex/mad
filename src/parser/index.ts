@@ -7,8 +7,9 @@ import {
 	VariableAssignment,
 	VariableDeclaration,
 	Identifier,
+	StatementLocation,
 } from "./ast.ts";
-import { formatError, Token, TokenTypes } from "../lexer.ts";
+import { formatTokenError, Token, TokenTypes } from "../lexer.ts";
 import { ValueTypes } from "../interpreter/values.ts";
 
 const createParser = () => {
@@ -45,9 +46,9 @@ const createParser = () => {
 
 	const throwUnexpected = (token?: Token) => {
 		throw new SyntaxError(
-			formatError(
+			formatTokenError(
 				token || at(),
-				"Unexpected token expected " +
+				"Unexpected token, expected " +
 					(TokenTypes[token?.type ?? -1] ?? "nothing") +
 					" but instead got " +
 					TokenTypes[at().type]
@@ -57,6 +58,8 @@ const createParser = () => {
 
 	return { reset, expect, eat, at, throwUnexpected, peek, save, restore };
 };
+
+const formatStatementError = (stmt: Statement) => {};
 
 // global parser
 const parser = createParser();
@@ -74,7 +77,7 @@ export const parse = (tokens: Token[]): Program => {
 			parser.at().type !== TokenTypes.EOF
 		) {
 			throw new SyntaxError(
-				formatError(parser.at(), "More than one statement on one line")
+				formatTokenError(parser.at(), "Expected end of line")
 			);
 		}
 	}
@@ -150,6 +153,8 @@ const parseVariableAssignment = (): VariableAssignment | Identifier => {
 		type: StatementTypes.VariableAssignment,
 		id,
 		value,
+		start: id.start,
+		end: value.end,
 	};
 };
 
@@ -158,13 +163,15 @@ const parseVariableDeclaration = (): VariableDeclaration => {
 
 	parseWS(false);
 
-	const { id, value } = parseVariableAssignment() as VariableAssignment;
+	const { id, value, end } = parseVariableAssignment() as VariableAssignment;
 
 	return {
 		type: StatementTypes.VariableDeclaration,
 		value,
 		id,
 		variableType: type.value as ValueTypes,
+		start: createLocationsFromToken(type).start,
+		end,
 	};
 };
 
@@ -186,11 +193,15 @@ const parseAddition = () => {
 
 		parseWS();
 
+		const right = parseMultiplication();
+
 		const op = {
 			type: StatementTypes.BinaryOperation,
 			left: left,
-			right: parseMultiplication(),
+			right,
 			operator,
+			start: left.start,
+			end: right.end,
 		};
 
 		left = op;
@@ -213,17 +224,38 @@ const parseMultiplication = () => {
 
 		parseWS();
 
+		const rightSide = parseLiteral();
+
 		const op = {
 			type: StatementTypes.BinaryOperation,
 			left: left,
-			right: parseLiteral(),
+			right: rightSide,
 			operator,
+			start: left.start,
+			end: rightSide.end,
 		};
 
 		left = op;
 	}
 
 	return left;
+};
+
+const createLocationsFromToken = ({
+	text,
+	col,
+	line,
+}: Token): { start: StatementLocation; end: StatementLocation } => {
+	return {
+		start: {
+			line,
+			col,
+		},
+		end: {
+			col: col + text.length,
+			line,
+		},
+	};
 };
 
 const parseLiteral = () => {
@@ -236,6 +268,7 @@ const parseLiteral = () => {
 			return {
 				type: StatementTypes.NumberLiteral,
 				value,
+				...createLocationsFromToken(parser.peek(-1)),
 			};
 		}
 
@@ -254,11 +287,12 @@ const parseLiteral = () => {
 			return parseIdentifier();
 
 		case TokenTypes.String: {
-			const { value } = parser.eat();
+			const { value, col, line } = parser.eat();
 
 			return {
 				type: StatementTypes.StringLiteral,
 				value,
+				...createLocationsFromToken(parser.peek(-1)),
 			};
 		}
 
@@ -271,10 +305,11 @@ const parseLiteral = () => {
 
 const parseIdentifier = (): Identifier => {
 	parser.expect(TokenTypes.Identifier);
-	const { value: name } = parser.eat();
+	const { value: name, col, line } = parser.eat();
 
 	return {
 		type: StatementTypes.Identifier,
 		name,
+		...createLocationsFromToken(parser.peek(-1)),
 	};
 };

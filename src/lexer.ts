@@ -28,6 +28,7 @@ const keywords: Record<string, string[] | string> = {
 
 export interface Token {
 	value: string;
+	text: string;
 	type: TokenTypes;
 	line: number;
 	col: number;
@@ -77,14 +78,14 @@ export const tokenize = (str: string) => {
 	lexer.reset(str);
 
 	const transformToken = (token: any) => {
-		let { type, col, value, line } = token;
+		let { type, col, value, line, text } = token;
 
 		// convert back to number cuz js converts number object keys to string
-		type = Number(token);
+		type = Number(type);
 
 		// check if theres invalid token
 		if (type === TokenTypes.NoMatch) {
-			throw new SyntaxError(formatError(token, "Invalid syntax")); // TODO: add better error messages
+			throw new SyntaxError(formatTokenError(token, "Invalid syntax")); // TODO: add better error messages
 		}
 
 		// convert keywords to the right type
@@ -101,6 +102,7 @@ export const tokenize = (str: string) => {
 			value: value,
 			col,
 			line,
+			text,
 		};
 	};
 
@@ -111,10 +113,11 @@ export const tokenize = (str: string) => {
 		value: "<EOF>",
 		col: lexer.col,
 		line: lexer.line,
+		text: "",
 	});
 
 	return tokens;
 };
 
-export const formatError: (token: Token, text: string) => string =
+export const formatTokenError: (token: Token, text: string) => string =
 	lexer.formatError.bind(lexer);
