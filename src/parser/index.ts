@@ -230,13 +230,14 @@ const parseLiteral = () => {
 	parseWS();
 
 	switch (parser.at().type) {
-		case TokenTypes.Number:
+		case TokenTypes.Number: {
 			const { value } = parser.eat();
 
 			return {
 				type: StatementTypes.NumberLiteral,
 				value,
 			};
+		}
 
 		case TokenTypes.LParen:
 			parser.eat();
@@ -251,6 +252,15 @@ const parseLiteral = () => {
 
 		case TokenTypes.Identifier:
 			return parseIdentifier();
+
+		case TokenTypes.String: {
+			const { value } = parser.eat();
+
+			return {
+				type: StatementTypes.StringLiteral,
+				value,
+			};
+		}
 
 		default:
 			parser.throwUnexpected();

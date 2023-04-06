@@ -6,16 +6,20 @@ import {
 	Program,
 	Statement,
 	StatementTypes,
+	StringLiteral,
 	VariableAssignment,
 	VariableDeclaration,
 } from "../parser/ast.ts";
 import { createScope, Scope } from "./scope.ts";
-import { NumberValue, Value } from "./values.ts";
+import { NumberValue, StringValue, Value } from "./values.ts";
 
 export const evaluate = (stmt: Statement, scope: Scope): Value => {
 	switch (stmt.type) {
 		case StatementTypes.NumberLiteral:
 			return evalNumber(stmt as NumberLiteral);
+
+		case StatementTypes.StringLiteral:
+			return evalString(stmt as StringLiteral);
 
 		case StatementTypes.BinaryOperation:
 			return evalBinaryOperation(stmt as BinaryOperation, scope);
@@ -47,6 +51,10 @@ const evalVariableAssignment = (
 
 	const value = evaluate(expr, scope);
 
+	if (value.type !== scope.resolve(id)?.type) {
+		throw new Error("invalid type");
+	}
+
 	scope.assign(id, value);
 
 	return value;
@@ -61,6 +69,10 @@ const evalVariableDeclaration = (
 	}
 
 	const value = evaluate(expr, scope);
+
+	if (value.type !== variableType) {
+		throw new Error("invalid type");
+	}
 
 	scope.assign(id, value);
 
@@ -100,12 +112,22 @@ const evalNumber = (numberToken: NumberLiteral) => {
 	});
 };
 
+const evalString = (stringToken: StringLiteral) => {
+	return new StringValue({
+		value: stringToken.value,
+	});
+};
+
 const evalBinaryOperation = (
 	{ operator, left, right }: BinaryOperation,
 	scope: Scope
 ) => {
 	const firstVal = evaluate(left, scope);
 	const secondVal = evaluate(right, scope);
+
+	if (firstVal.type != secondVal.type) {
+		throw new Error("invalid binary operation");
+	}
 
 	return firstVal.handleBinaryOperation(operator, secondVal);
 };

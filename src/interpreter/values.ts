@@ -1,13 +1,20 @@
-import { BinaryOperator } from "../lexer.ts";
+export enum BinaryOperators {
+	Addition = "+",
+	Substraction = "-",
+	Multiplication = "*",
+	Division = "/",
+	Modulo = "%",
+}
 
 export enum ValueTypes {
 	Number = "num",
+	String = "str",
 }
 
 export abstract class Value {
 	constructor(public type: ValueTypes) {}
 
-	handleBinaryOperation(operator: BinaryOperator, value: Value): Value {
+	handleBinaryOperation(operator: BinaryOperators, value: Value): Value {
 		throw new Error("unhandled binary operation");
 	}
 
@@ -28,22 +35,22 @@ export class NumberValue extends Value {
 	}
 
 	handleBinaryOperation(
-		operator: BinaryOperator,
+		operator: BinaryOperators,
 		number: NumberValue
 	): NumberValue {
 		let value: number = 0;
 
 		switch (operator) {
-			case BinaryOperator.Addition:
+			case BinaryOperators.Addition:
 				value = this.value + number.value;
 				break;
-			case BinaryOperator.Multiplication:
+			case BinaryOperators.Multiplication:
 				value = this.value * number.value;
 				break;
-			case BinaryOperator.Substraction:
+			case BinaryOperators.Substraction:
 				value = this.value - number.value;
 				break;
-			case BinaryOperator.Division:
+			case BinaryOperators.Division:
 				value = this.value / number.value;
 				break;
 
@@ -52,6 +59,33 @@ export class NumberValue extends Value {
 		}
 
 		return new NumberValue({ value });
+	}
+
+	toString(): string {
+		return this.value.toString();
+	}
+}
+
+export class StringValue extends Value {
+	private value: string;
+
+	constructor(options: { value: string }) {
+		super(ValueTypes.String);
+
+		this.value = options.value;
+	}
+
+	handleBinaryOperation(
+		operator: BinaryOperators,
+		string: StringValue
+	): StringValue {
+		switch (operator) {
+			case BinaryOperators.Addition:
+				return new StringValue({ value: this.value + string.value });
+
+			default:
+				throw new Error("String doesnt support this binary operationr");
+		}
 	}
 
 	toString(): string {

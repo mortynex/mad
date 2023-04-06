@@ -1,9 +1,10 @@
 import { ValueTypes } from "../interpreter/values.ts";
-import { BinaryOperator, Token } from "../lexer.ts";
+import { BinaryOperators, Token } from "../lexer.ts";
 
 export enum StatementTypes {
 	Program,
 	NumberLiteral,
+	StringLiteral,
 	BinaryOperation,
 	Identifier,
 	VariableAssignment,
@@ -44,9 +45,14 @@ export interface NumberLiteral extends Expression {
 	value: string;
 }
 
+export interface StringLiteral extends Expression {
+	type: StatementTypes.NumberLiteral;
+	value: string;
+}
+
 export interface BinaryOperation extends Expression {
 	type: StatementTypes.BinaryOperation;
 	left: Expression;
 	right: Expression;
-	operator: BinaryOperator;
+	operator: BinaryOperators;
 }

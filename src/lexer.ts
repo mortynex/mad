@@ -1,23 +1,19 @@
 import moo from "npm:moo";
-import { ValueTypes } from "./interpreter/values.ts";
-
-export enum BinaryOperator {
-	Addition = "+",
-	Substraction = "-",
-	Multiplication = "*",
-	Division = "/",
-	Modulo = "%",
-}
+import { BinaryOperators, ValueTypes } from "./interpreter/values.ts";
 
 export enum TokenTypes {
 	LParen,
 	RParen,
+
 	Number,
+	String,
+
 	BinaryAdditionOperator,
 	BinaryMultiplicationOperator,
 	AssignmentOperator,
 	Identifier,
 	ValueType,
+	FunctionKeyword,
 	// whitespaces\
 	WS,
 	NL,
@@ -25,6 +21,10 @@ export enum TokenTypes {
 	EOF,
 	NoMatch,
 }
+
+const keywords: Record<string, string[] | string> = {
+	[TokenTypes.ValueType]: [ValueTypes.Number, ValueTypes.String],
+};
 
 export interface Token {
 	value: string;
@@ -35,41 +35,69 @@ export interface Token {
 
 const lexer = moo.compile({
 	[TokenTypes.WS]: /[ \t]+/,
+	[TokenTypes.String]: {
+		match: /".*?"/,
+		value: (txt: string) => txt.slice(1, -1),
+	},
 	[TokenTypes.Number]: /0|[1-9][0-9]*/,
 	[TokenTypes.LParen]: "(",
 	[TokenTypes.RParen]: ")",
 	[TokenTypes.BinaryAdditionOperator]: [
-		BinaryOperator.Addition,
-		BinaryOperator.Substraction,
+		BinaryOperators.Addition,
+		BinaryOperators.Substraction,
 	],
 	[TokenTypes.BinaryMultiplicationOperator]: [
-		BinaryOperator.Modulo,
-		BinaryOperator.Multiplication,
-		BinaryOperator.Division,
+		BinaryOperators.Modulo,
+		BinaryOperators.Multiplication,
+		BinaryOperators.Division,
 	],
 	[TokenTypes.AssignmentOperator]: "=",
 	[TokenTypes.Identifier]: {
 		match: /[a-zA-Z][\w]*/,
-		type: moo.keywords({
-			[TokenTypes.ValueType]: "num",
-		}),
 	},
 	[TokenTypes.NL]: { match: /\n/, lineBreaks: true },
 	[TokenTypes.NoMatch]: { error: true },
 });
 
+const keywordTypeMap = new Map<string, number>();
+
+for (let [type, kws] of Object.entries(keywords)) {
+	const fixedType = Number(type);
+
+	const setKeyword = (kw: string) => keywordTypeMap.set(kw, fixedType);
+
+	if (!Array.isArray(kws)) setKeyword(kws);
+
+	for (const poss of kws) {
+		keywordTypeMap.set(poss, Number(type));
+	}
+}
+
 export const tokenize = (str: string) => {
 	lexer.reset(str);
 
 	const transformToken = (token: any) => {
-		const { type, col, value, line } = token;
+		let { type, col, value, line } = token;
 
-		if (Number(type) === TokenTypes.NoMatch) {
+		// convert back to number cuz js converts number object keys to string
+		type = Number(token);
+
+		// check if theres invalid token
+		if (type === TokenTypes.NoMatch) {
 			throw new SyntaxError(formatError(token, "Invalid syntax")); // TODO: add better error messages
 		}
 
+		// convert keywords to the right type
+		if (type === TokenTypes.Identifier) {
+			const newType = keywordTypeMap.get(value);
+
+			if (newType) {
+				type = newType;
+			}
+		}
+
 		return {
-			type: Number(type),
+			type: type,
 			value: value,
 			col,
 			line,
@@ -80,7 +108,7 @@ export const tokenize = (str: string) => {
 
 	tokens.push({
 		type: TokenTypes.EOF,
-		value: "<eof>",
+		value: "<EOF>",
 		col: lexer.col,
 		line: lexer.line,
 	});
