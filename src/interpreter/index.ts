@@ -1,4 +1,4 @@
-import { formatError } from "../lexer.ts";
+import { lexer } from "../lexer/lexer.ts";
 import {
 	BinaryOperation,
 	Identifier,
@@ -6,7 +6,6 @@ import {
 	Program,
 	Statement,
 	StatementTypes,
-	StringLiteral,
 	VariableAssignment,
 	VariableDeclaration,
 } from "../parser/ast.ts";
@@ -18,8 +17,8 @@ export const evaluate = (stmt: Statement, scope: Scope): Value => {
 		case StatementTypes.NumberLiteral:
 			return evalNumber(stmt as NumberLiteral);
 
-		case StatementTypes.StringLiteral:
-			return evalString(stmt as StringLiteral);
+		/*case StatementTypes.StringLiteral:
+			return evalString(stmt as StringLiteral);*/
 
 		case StatementTypes.BinaryOperation:
 			return evalBinaryOperation(stmt as BinaryOperation, scope);
@@ -112,11 +111,11 @@ const evalNumber = (numberToken: NumberLiteral) => {
 	});
 };
 
-const evalString = (stringToken: StringLiteral) => {
+/* const evalString = (stringToken: StringLiteral) => {
 	return new StringValue({
 		value: stringToken.value,
 	});
-};
+}; */
 
 const evalBinaryOperation = (
 	{ operator, left, right }: BinaryOperation,

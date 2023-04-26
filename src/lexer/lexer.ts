@@ -2,12 +2,13 @@ import moo from "npm:moo";
 import { BinaryOperators } from "../interpreter/values.ts";
 import { Token, TokenTypes } from "./tokens.ts";
 
-type Lexer = {
-	reset: (input: string) => Lexer;
-	formatError: (token: Token, text: string) => string;
-	[Symbol.iterator]: () => Iterator<Token>;
+export interface Lexer {
+	reset: (chunk: string, info: any) => void;
 	next: () => Token;
-};
+	save: () => any;
+	formatError: (token: never) => string;
+	has: (tokenType: string) => boolean;
+}
 
 export const lexer: Lexer = moo.compile({
 	[TokenTypes.WS]: /[ \t]+/,

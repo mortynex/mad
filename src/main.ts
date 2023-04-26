@@ -1,8 +1,8 @@
-import { evalProgram, evaluate } from "./interpreter/index.ts";
-import { createScope } from "./interpreter/scope.ts";
-import { tokenize, TokenTypes } from "./lexer.ts";
-import { parse } from "./parser/index.ts";
-
+import { Token, TokenTypes } from "./lexer/tokens.ts";
+import { ONE_OR_MORE, ZERO_OR_MORE } from "./parser/cfg/AddOns.ts";
+import { Grammar } from "./parser/cfg/Grammar.ts";
+import { grammar } from "./parser/grammar.ts";
+import { parse } from "./parser/parser.ts";
 const options = {
 	showOnlyTokens: false,
 	showOnlyAST: false,
@@ -52,18 +52,6 @@ const startREPL = (processor: (input: string) => any) => {
 	}
 };
 
-const globalScope = createScope();
-
 startREPL((code: string) => {
-	const tokens = tokenize(code);
-
-	if (options.showOnlyTokens) return tokens;
-
-	const ast = parse(tokens);
-
-	if (options.showOnlyAST) return ast;
-
-	const result = evalProgram(ast, globalScope, false).toString();
-
-	return result;
+	return parse(code);
 });
