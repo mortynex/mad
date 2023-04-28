@@ -88,7 +88,6 @@ export class ZeroOrMoreSymbol extends AddOnSymbol {
 			rules: [
 				{
 					postprocess: (sym: any, other: any) => {
-						console.log({ other });
 						return [sym, ...other];
 					},
 					name,

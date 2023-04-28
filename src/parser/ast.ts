@@ -1,4 +1,4 @@
-import { Token } from "../lexer/tokens.ts";
+import { BinaryOperator } from "../interpreter/values.ts";
 
 export enum StatementTypes {
 	Program,
@@ -33,8 +33,10 @@ export interface VariableAssignment extends Expression {
 	value: Expression;
 }
 
-export interface VariableDeclaration extends Omit<VariableAssignment, "type"> {
+export interface VariableDeclaration extends Statement {
 	type: StatementTypes.VariableDeclaration;
+	id: Identifier;
+	value: Expression;
 }
 
 export interface NumberLiteral extends Expression {
@@ -46,5 +48,5 @@ export interface BinaryOperation extends Expression {
 	type: StatementTypes.BinaryOperation;
 	left: Expression;
 	right: Expression;
-	//operator: BinaryOperator;
+	operator: BinaryOperator;
 }

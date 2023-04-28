@@ -60,7 +60,7 @@ const evalVariableAssignment = (
 };
 
 const evalVariableDeclaration = (
-	{ id, value: expr, variableType }: VariableDeclaration,
+	{ id, value: expr }: VariableDeclaration,
 	scope: Scope
 ) => {
 	if (scope.has(id)) {
@@ -68,10 +68,6 @@ const evalVariableDeclaration = (
 	}
 
 	const value = evaluate(expr, scope);
-
-	if (value.type !== variableType) {
-		throw new Error("invalid type");
-	}
 
 	scope.assign(id, value);
 

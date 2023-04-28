@@ -2,10 +2,11 @@ export enum TokenTypes {
 	LParen,
 	RParen,
 
-	CBraceL,
-	CBraceR,
+	LArgParen,
+	RArgParen,
 
-	ListSeperator,
+	LCodeBlockParen,
+	RCodeBlockParen,
 
 	Number,
 	String,
@@ -14,10 +15,9 @@ export enum TokenTypes {
 	BinaryMultiplicationOperator,
 	AssignmentOperator,
 	Identifier,
-	ValueType,
 
+	VariableDeclarationKeyword,
 	FunctionKeyword,
-	MutableKeyword,
 	ReturnKeyword,
 
 	// whitespaces\

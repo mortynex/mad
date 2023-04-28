@@ -1,5 +1,5 @@
 import moo from "npm:moo";
-import { BinaryOperators } from "../interpreter/values.ts";
+import { BinaryOperator } from "../interpreter/values.ts";
 import { Token, TokenTypes } from "./tokens.ts";
 
 export interface Lexer {
@@ -19,25 +19,26 @@ export const lexer: Lexer = moo.compile({
 	[TokenTypes.Number]: /0|[1-9][0-9]*/,
 	[TokenTypes.LParen]: "(",
 	[TokenTypes.RParen]: ")",
-	[TokenTypes.CBraceL]: "{",
-	[TokenTypes.CBraceR]: "}",
-	[TokenTypes.ListSeperator]: ",",
+	[TokenTypes.LArgParen]: "{",
+	[TokenTypes.RArgParen]: "}",
+	[TokenTypes.LCodeBlockParen]: "[",
+	[TokenTypes.RCodeBlockParen]: "]",
 	[TokenTypes.BinaryAdditionOperator]: [
-		BinaryOperators.Addition,
-		BinaryOperators.Substraction,
+		BinaryOperator.Addition,
+		BinaryOperator.Substraction,
 	],
 	[TokenTypes.BinaryMultiplicationOperator]: [
-		BinaryOperators.Modulo,
-		BinaryOperators.Multiplication,
-		BinaryOperators.Division,
+		BinaryOperator.Modulo,
+		BinaryOperator.Multiplication,
+		BinaryOperator.Division,
 	],
 	[TokenTypes.AssignmentOperator]: "=",
 	[TokenTypes.Identifier]: {
 		match: /[a-zA-Z][\w]*/,
 		type: moo.keywords({
 			[TokenTypes.FunctionKeyword]: "fun",
-			[TokenTypes.MutableKeyword]: "mut",
 			[TokenTypes.ReturnKeyword]: "return",
+			[TokenTypes.VariableDeclarationKeyword]: "let",
 		}),
 	},
 	[TokenTypes.NL]: { match: /\n/, lineBreaks: true },

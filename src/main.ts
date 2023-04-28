@@ -1,7 +1,3 @@
-import { Token, TokenTypes } from "./lexer/tokens.ts";
-import { ONE_OR_MORE, ZERO_OR_MORE } from "./parser/cfg/AddOns.ts";
-import { Grammar } from "./parser/cfg/Grammar.ts";
-import { grammar } from "./parser/grammar.ts";
 import { parse } from "./parser/parser.ts";
 const options = {
 	showOnlyTokens: false,

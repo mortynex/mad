@@ -1,4 +1,4 @@
-export enum BinaryOperators {
+export enum BinaryOperator {
 	Addition = "+",
 	Substraction = "-",
 	Multiplication = "*",
@@ -14,7 +14,7 @@ export enum ValueTypes {
 export abstract class Value {
 	constructor(public type: ValueTypes) {}
 
-	handleBinaryOperation(operator: BinaryOperators, value: Value): Value {
+	handleBinaryOperation(operator: BinaryOperator, value: Value): Value {
 		throw new Error("unhandled binary operation");
 	}
 
@@ -35,22 +35,22 @@ export class NumberValue extends Value {
 	}
 
 	handleBinaryOperation(
-		operator: BinaryOperators,
+		operator: BinaryOperator,
 		number: NumberValue
 	): NumberValue {
 		let value: number = 0;
 
 		switch (operator) {
-			case BinaryOperators.Addition:
+			case BinaryOperator.Addition:
 				value = this.value + number.value;
 				break;
-			case BinaryOperators.Multiplication:
+			case BinaryOperator.Multiplication:
 				value = this.value * number.value;
 				break;
-			case BinaryOperators.Substraction:
+			case BinaryOperator.Substraction:
 				value = this.value - number.value;
 				break;
-			case BinaryOperators.Division:
+			case BinaryOperator.Division:
 				value = this.value / number.value;
 				break;
 
@@ -76,11 +76,11 @@ export class StringValue extends Value {
 	}
 
 	handleBinaryOperation(
-		operator: BinaryOperators,
+		operator: BinaryOperator,
 		string: StringValue
 	): StringValue {
 		switch (operator) {
-			case BinaryOperators.Addition:
+			case BinaryOperator.Addition:
 				return new StringValue({ value: this.value + string.value });
 
 			default:
