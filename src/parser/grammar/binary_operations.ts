@@ -1,4 +1,4 @@
-import { BinaryOperator } from "../../interpreter/values.ts";
+import { BinaryOperator } from "../../constants.ts";
 import { Token, TokenTypes } from "../../lexer/tokens.ts";
 import { BinaryOperation, Expression, StatementTypes } from "../ast.ts";
 import { id, rules } from "./main.ts";

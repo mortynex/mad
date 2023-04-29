@@ -1,17 +1,6 @@
-import { BinaryOperator } from "../../interpreter/values.ts";
-import { Token, TokenTypes } from "../../lexer/tokens.ts";
-import {
-	BinaryOperation,
-	Expression,
-	Identifier,
-	NumberLiteral,
-	Program,
-	Statement,
-	StatementTypes,
-	VariableAssignment,
-	VariableDeclaration,
-} from "../ast.ts";
-import { ONE_OR_MORE, OPTIONAL, ZERO_OR_MORE } from "../cfg/AddOns.ts";
+import { TokenTypes } from "../../lexer/tokens.ts";
+import { Program, Statement, StatementTypes } from "../ast.ts";
+import { OPTIONAL, ZERO_OR_MORE } from "../cfg/AddOns.ts";
 import { Grammar } from "../cfg/Grammar.ts";
 
 enum rulesTypes {

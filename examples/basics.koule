@@ -1,6 +1,6 @@
 let a = -2
 
-fun add {a b} [
+fun add (a b) [
     ret a + b
 ]
 
@@ -9,6 +9,7 @@ let b = (add a 1)
 add a b
 
 let arr = {1 2 3 4}
+
 let obj = {
     hey: 1
     two: 2 
@@ -22,5 +23,10 @@ mutable++
 
 let lambda_add = {a b} -> a + b
 
-// should be 3
+if(true == faLse)
+
+// ternary operator
+let ternary = 1 == 2 ? "yes" : "no"
+
+// pipe operators
 let result = (add a 1) |> (add $ 2)

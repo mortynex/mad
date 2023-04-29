@@ -1,5 +1,5 @@
 import moo from "npm:moo";
-import { BinaryOperator } from "../interpreter/values.ts";
+import { BinaryOperator } from "../constants.ts";
 import { Token, TokenTypes } from "./tokens.ts";
 
 export interface Lexer {

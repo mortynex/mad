@@ -1,4 +1,4 @@
-import { BinaryOperator } from "../interpreter/values.ts";
+import { BinaryOperator } from "../constants.ts";
 
 export enum StatementTypes {
 	Program,

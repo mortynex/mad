@@ -4,7 +4,7 @@ import { rules, id, at } from "./main.ts";
 
 rules.Expression([rules.Addition], id);
 
-// goes through addition to correctly parse math
+// goes through addition to correctly parse binary operations
 
 rules.Basic([rules.NumberLiteral], id);
 rules.Basic([rules.Identifier], id);
