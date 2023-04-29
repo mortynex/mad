@@ -1,3 +1,5 @@
+import { evalProgram } from "./interpreter/eval/program.ts";
+import { createGlobalScope } from "./interpreter/scope/globalScope.ts";
 import { parse } from "./parser/parser.ts";
 const options = {
 	showOnlyTokens: false,
@@ -48,6 +50,12 @@ const startREPL = (processor: (input: string) => any) => {
 	}
 };
 
+const scope = createGlobalScope();
+
 startREPL((code: string) => {
-	return parse(code);
+	const program = parse(code);
+
+	const result = evalProgram(scope, program, false);
+
+	console.log(result);
 });

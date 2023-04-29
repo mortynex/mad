@@ -11,6 +11,7 @@ export class Scope {
 	}
 
 	resolve(id: Identifier): Value | undefined {
+		console.log({ env: this.env });
 		return this.env.get(id.name) ?? this.parentScope?.resolve(id);
 	}
 
@@ -18,5 +19,9 @@ export class Scope {
 		this.env.set(id.name, value);
 
 		return this;
+	}
+
+	createChildScope() {
+		return new Scope(this);
 	}
 }
