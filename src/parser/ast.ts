@@ -7,6 +7,7 @@ export enum StatementTypes {
 	Identifier,
 	VariableAssignment,
 	VariableDeclaration,
+	StringLiteral,
 }
 
 export interface Statement {
@@ -41,6 +42,11 @@ export interface VariableDeclaration extends Statement {
 
 export interface NumberLiteral extends Expression {
 	type: StatementTypes.NumberLiteral;
+	value: string;
+}
+
+export interface StringLiteral extends Expression {
+	type: StatementTypes.StringLiteral;
 	value: string;
 }
 

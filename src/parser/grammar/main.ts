@@ -18,6 +18,7 @@ enum rulesTypes {
 	Multiplication,
 	Parens,
 	Basic,
+	StringLiteral
 }
 
 export const grammar = new Grammar<Statement | null>();

@@ -11,7 +11,6 @@ export class Scope {
 	}
 
 	resolve(id: Identifier): Value | undefined {
-		console.log({ env: this.env });
 		return this.env.get(id.name) ?? this.parentScope?.resolve(id);
 	}
 
