@@ -16,6 +16,8 @@ export const parse = (text: string) => {
 
 	if (nearleyParser.results.length > 1) {
 		console.warn("Language design error: Ambigius grammar detected 🫣");
+
+		console.log(`Found ${nearleyParser.results.length} possible results`);
 	}
 
 	if (nearleyParser.results.length === 0) {

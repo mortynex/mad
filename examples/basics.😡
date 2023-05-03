@@ -1,10 +1,10 @@
 let a = -2
 
-fun add (int a,  int b) [
+fun add (int a, int b) [
     ret a + b
 ]
 
-let b = (add a 1)
+let b = add (a, b)
 
 
 let arr = {1 2 3 4}

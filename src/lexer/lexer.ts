@@ -22,6 +22,7 @@ export const lexer: Lexer = moo.compile({
 	[TokenTypes.RArgParen]: "}",
 	[TokenTypes.LCodeBlockParen]: "[",
 	[TokenTypes.RCodeBlockParen]: "]",
+	[TokenTypes.Comma]: ",",
 	[TokenTypes.BinaryAdditionOperator]: [
 		BinaryOperator.Addition,
 		BinaryOperator.Substraction,

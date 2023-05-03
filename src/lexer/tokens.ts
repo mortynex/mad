@@ -8,6 +8,8 @@ export enum TokenTypes {
 	LCodeBlockParen,
 	RCodeBlockParen,
 
+	Comma,
+
 	Number,
 	String,
 

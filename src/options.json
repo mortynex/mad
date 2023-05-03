@@ -1,3 +1,4 @@
 {
-	"extensions": ["txt", "😡", "mad"]
+	"extensions": ["txt", "😡", "mad"],
+	"debugging": true
 }

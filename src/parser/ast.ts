@@ -68,6 +68,6 @@ export interface FunctionCall extends Expression {
 export interface FunctionDeclaration extends Statement {
 	type: StatementTypes.FunctionDeclaration;
 	id: Identifier;
-	args: Identifier[];
-	body: Statement[];
+	params: Identifier[];
+	program: Program;
 }

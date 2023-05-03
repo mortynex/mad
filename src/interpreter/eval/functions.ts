@@ -1,6 +1,9 @@
 import { InterpreterError } from "../../errors.ts";
-import { FunctionCall } from "../../parser/ast.ts";
+import { FunctionCall, FunctionDeclaration } from "../../parser/ast.ts";
+import { ScopeRecord } from "../scope/record.ts";
 import { Scope } from "../scope/scope.ts";
+import { ScopeType } from "../scope/types.ts";
+import { mkNull } from "../values/factories.ts";
 import {
 	FunctionValue,
 	NativeFunctionValue,
@@ -8,6 +11,7 @@ import {
 	ValueType,
 } from "../values/values.ts";
 import { evaluate, EvaluateFunction } from "./main.ts";
+import { evalProgram } from "./program.ts";
 
 const isNativeFunction = (val: Value): val is NativeFunctionValue => {
 	return val.type === ValueType.NativeFunction;
@@ -39,9 +43,40 @@ export const evalFunctionCall: EvaluateFunction<FunctionCall> = (
 		throw new InterpreterError(stmt, `"${stmt.id}" is not a function`);
 	}
 
-	throw new InterpreterError(stmt, "Not implemented");
+	const funcScope = new Scope(ScopeType.Function, scope);
 
-	/* const funcScope = new Scope(scope);
-    
-    for(const param of func.params) {} */
+	if (args.length !== func.params.length) {
+		throw new InterpreterError(
+			stmt,
+			`Function "${stmt.id}" expects ${func.params.length} arguments, but ${args.length} were provided`
+		);
+	}
+
+	for (const param of func.params) {
+		funcScope.assign(
+			param.id,
+			new ScopeRecord(args.shift()!, { mutable: true })
+		);
+	}
+
+	return evalProgram(funcScope, func.body);
+};
+
+export const evalFunctionDeclaration: EvaluateFunction<FunctionDeclaration> = (
+	scope: Scope,
+	stmt: FunctionDeclaration
+) => {
+	const fun: FunctionValue = {
+		type: ValueType.Function,
+		params: stmt.params.map((id) => ({ id })),
+		body: stmt.program,
+	};
+
+	if (scope.has(stmt.id)) {
+		throw new InterpreterError(stmt, `Cannot redeclare name "${stmt.id.name}"`);
+	}
+
+	scope.assign(stmt.id, new ScopeRecord(fun, { mutable: false }));
+
+	return mkNull();
 };

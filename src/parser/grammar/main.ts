@@ -16,6 +16,7 @@ enum rulesTypes {
 	// main.ts
 	Line,
 	Program,
+	Codeblock,
 
 	// statements.ts
 	Statement,
@@ -38,8 +39,9 @@ enum rulesTypes {
 
 	// functions.ts
 	FunctionCall,
+	$FunctionCallArgs,
 	FunctionDeclaration,
-	FunctionCallArgs,
+	$FunctionDeclarationParams,
 }
 
 export const grammar = new Grammar<Statement | null>();
@@ -57,12 +59,24 @@ export const at =
 
 rules.Program(
 	[rules._ml, rules.Statement, ZERO_OR_MORE(rules.Line), rules._ml],
-	(_, first: Statement): Program => {
+	(_, first: Statement, lines): Program => {
 		return {
 			type: StatementTypes.Program,
-			body: [first],
+			body: [first, ...lines],
 		};
 	}
 );
 
 rules.Line([rules.__lb, rules.Statement], at(1));
+
+rules.Codeblock(
+	[TokenTypes.LCodeBlockParen, rules.Program, TokenTypes.RCodeBlockParen],
+	at(1)
+);
+
+rules.Codeblock([rules.Statement], (stmt): Program => {
+	return {
+		type: StatementTypes.Program,
+		body: [stmt],
+	};
+});

@@ -1,9 +1,12 @@
 import { Identifier } from "../../parser/ast.ts";
 import { Value } from "../values/values.ts";
 import { ScopeRecord } from "./record.ts";
+import { ScopeType } from "./types.ts";
 
 export class Scope {
-	constructor(public parentScope?: Scope) {}
+	public global = false;
+
+	constructor(public type: ScopeType, public parentScope?: Scope) {}
 
 	private env = new Map<string, ScopeRecord>();
 
@@ -21,7 +24,7 @@ export class Scope {
 		return value;
 	}
 
-	createChildScope() {
-		return new Scope(this);
+	createChildScope(type: ScopeType) {
+		return new Scope(type, this);
 	}
 }

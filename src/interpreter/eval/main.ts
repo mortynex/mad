@@ -2,6 +2,7 @@ import { InterpreterError } from "../../errors.ts";
 import {
 	BinaryOperation,
 	FunctionCall,
+	FunctionDeclaration,
 	Identifier,
 	NumberLiteral,
 	Statement,
@@ -13,7 +14,7 @@ import {
 import { Scope } from "../scope/scope.ts";
 import { Value } from "../values/values.ts";
 import { evalBinaryOperation } from "./binaryOperations.ts";
-import { evalFunctionCall } from "./functions.ts";
+import { evalFunctionCall, evalFunctionDeclaration } from "./functions.ts";
 import {
 	evalIdentifier,
 	evalNumberLiteral,
@@ -30,6 +31,7 @@ export type EvaluateFunction<Token extends Statement = Statement> = (
 ) => Value;
 
 export const evaluate: EvaluateFunction = (scope: Scope, stmt: Statement) => {
+	
 	switch (stmt.type) {
 		case StatementTypes.NumberLiteral:
 			return evalNumberLiteral(scope, stmt as NumberLiteral);
@@ -51,6 +53,9 @@ export const evaluate: EvaluateFunction = (scope: Scope, stmt: Statement) => {
 
 		case StatementTypes.FunctionCall:
 			return evalFunctionCall(scope, stmt as FunctionCall);
+
+		case StatementTypes.FunctionDeclaration:
+			return evalFunctionDeclaration(scope, stmt as FunctionDeclaration);
 
 		default:
 			throw new InterpreterError(

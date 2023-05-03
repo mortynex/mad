@@ -1,9 +1,5 @@
-let a = 2
 
-let b = 3
 
-let c = a + b
+fun main () [print ("hello world!")]
 
-a = 5
-
-print (a)
+main()

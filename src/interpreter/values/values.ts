@@ -1,4 +1,4 @@
-import { Statement } from "../../parser/ast.ts";
+import { Identifier, Program, Statement } from "../../parser/ast.ts";
 
 export enum ValueType {
 	Number = "num",
@@ -39,8 +39,12 @@ export interface NullValue extends Value {
 
 export interface FunctionValue extends Value {
 	type: ValueType.Function;
-	params: string[];
-	body: Statement[];
+	params: FunctionParam[];
+	body: Program;
+}
+
+export interface FunctionParam {
+	id: Identifier;
 }
 
 export interface NativeFunctionValue extends Value {

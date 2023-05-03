@@ -4,6 +4,7 @@ import { transformValue } from "../values/transformers.ts";
 import { Booleans, Value } from "../values/values.ts";
 import { ScopeRecord } from "./record.ts";
 import { Scope } from "./scope.ts";
+import { ScopeType } from "./types.ts";
 
 const mkIdentifier = (name: string): Identifier => ({
 	type: StatementTypes.Identifier,
@@ -11,7 +12,9 @@ const mkIdentifier = (name: string): Identifier => ({
 });
 
 export const createGlobalScope = () => {
-	const scope = new Scope();
+	const scope = new Scope(ScopeType.Global);
+
+	scope.global = true;
 
 	const assignGlobalVariable = (name: string, value: Value) => {
 		scope.assign(
