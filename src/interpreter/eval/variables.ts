@@ -1,4 +1,5 @@
 import { VariableAssignment, VariableDeclaration } from "../../parser/ast.ts";
+import { ScopeRecord } from "../scope/record.ts";
 import { Scope } from "../scope/scope.ts";
 import { mkNull } from "../values/factories.ts";
 import { evaluate, EvaluateFunction } from "./main.ts";
@@ -7,7 +8,11 @@ export const evalVariableDeclaration: EvaluateFunction<VariableDeclaration> = (
 	scope: Scope,
 	{ id, value }: VariableDeclaration
 ) => {
-	scope.assign(id, evaluate(scope, value));
+	if (scope.has(id)) {
+		throw new Error(`cannot redeclare name "${id.name}"`);
+	}
+
+	scope.assign(id, new ScopeRecord(evaluate(scope, value), { mutable: false }));
 
 	return mkNull();
 };
@@ -17,12 +22,12 @@ export const evalVariableAssignment: EvaluateFunction<VariableAssignment> = (
 	{ id, value }: VariableAssignment
 ) => {
 	if (!scope.has(id)) {
-		throw new Error(`cannot find name "${id.name}"`);
+		throw new Error(`cannot assign to undeclared name "${id.name}"`);
 	}
 
 	const varValue = evaluate(scope, value);
 
-	scope.assign(id, varValue);
+	scope.resolve(id)?.changeValue(varValue);
 
 	return varValue;
 };
