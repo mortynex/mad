@@ -1,3 +1,4 @@
+import { InterpreterError } from "../../errors.ts";
 import {
 	BinaryOperation,
 	FunctionCall,
@@ -52,8 +53,9 @@ export const evaluate: EvaluateFunction = (scope: Scope, stmt: Statement) => {
 			return evalFunctionCall(scope, stmt as FunctionCall);
 
 		default:
-			throw new Error(
-				`the statement ["${
+			throw new InterpreterError(
+				stmt,
+				`Internal Error: Statement type ["${
 					StatementTypes[stmt.type]
 				}"] is missing an implementation`
 			);

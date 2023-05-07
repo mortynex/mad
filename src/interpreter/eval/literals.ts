@@ -1,3 +1,4 @@
+import { InterpreterError } from "../../errors.ts";
 import { Identifier, NumberLiteral, StringLiteral } from "../../parser/ast.ts";
 import { Scope } from "../scope/scope.ts";
 import { mkNumber, mkString } from "../values/factories.ts";
@@ -26,7 +27,7 @@ export const evalIdentifier: EvaluateFunction<Identifier> = (
 	const record = scope.resolve(token);
 
 	if (!record) {
-		throw new Error("use of undefined variable");
+		throw new InterpreterError(token, "Use of undefined variable");
 	}
 
 	return record.value;

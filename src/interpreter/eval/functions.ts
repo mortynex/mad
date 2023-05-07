@@ -1,3 +1,4 @@
+import { InterpreterError } from "../../errors.ts";
 import { FunctionCall } from "../../parser/ast.ts";
 import { Scope } from "../scope/scope.ts";
 import {
@@ -23,7 +24,7 @@ export const evalFunctionCall: EvaluateFunction<FunctionCall> = (
 	const record = scope.resolve(stmt.id);
 
 	if (!record) {
-		throw new Error(`Function "${stmt.id}" is not defined`);
+		throw new InterpreterError(stmt, `Function "${stmt.id}" is not defined`);
 	}
 
 	const func = record.value;
@@ -35,10 +36,10 @@ export const evalFunctionCall: EvaluateFunction<FunctionCall> = (
 	}
 
 	if (!isFunction(func)) {
-		throw new Error(`"${stmt.id}" is not a function`);
+		throw new InterpreterError(stmt, `"${stmt.id}" is not a function`);
 	}
 
-	throw new Error("Not implemented");
+	throw new InterpreterError(stmt, "Not implemented");
 
 	/* const funcScope = new Scope(scope);
     

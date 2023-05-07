@@ -109,9 +109,20 @@ export class Grammar<ProcessorReturnType extends any> {
 
 		const ParserRules: NearleyGrammar["ParserRules"] = [];
 
-		const fixPostprocess =
-			(processor: (...args: any[]) => any) => (args: any) =>
-				processor(...args);
+		const wrapPostprocess = (processor: (...args: any[]) => any) => {
+			return (args: any[]) => {
+				const result = processor(...args);
+
+				args = args.filter((arg) => arg);
+
+				if (result) {
+					result.line = args[0]?.line;
+					result.col = args[0]?.col;
+				}
+
+				return result;
+			};
+		};
 
 		for (const [name, ruleList] of this.rules.entries()) {
 			let addOnNumber = 1;
@@ -121,7 +132,7 @@ export class Grammar<ProcessorReturnType extends any> {
 			for (const { processor, symbols: rawSymbols } of ruleList) {
 				const symbols: NearleySymbol[] = [];
 
-				const postprocess = fixPostprocess(processor);
+				const postprocess = wrapPostprocess(processor);
 
 				for (const rawSymbol of rawSymbols) {
 					const transformBaseSymbol = (
@@ -155,7 +166,7 @@ export class Grammar<ProcessorReturnType extends any> {
 						);
 
 						for (const addOnRule of addOnRules) {
-							addOnRule.postprocess = fixPostprocess(addOnRule.postprocess);
+							addOnRule.postprocess = wrapPostprocess(addOnRule.postprocess);
 						}
 
 						ParserRules.push(...addOnRules);

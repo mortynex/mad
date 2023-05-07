@@ -1,4 +1,5 @@
 import nearley from "npm:nearley";
+import { ErrorType } from "../errors.ts";
 import { lexer } from "../lexer/lexer.ts";
 import { grammar } from "./grammar.ts";
 
@@ -14,11 +15,15 @@ export const parse = (text: string) => {
 	nearleyParser.feed(text);
 
 	if (nearleyParser.results.length > 1) {
-		console.warn("Ambigius grammar detected");
+		console.warn("Language design error: Ambigius grammar detected 🫣");
 	}
 
 	if (nearleyParser.results.length === 0) {
-		throw new Error("Unexpected end of input");
+		throw {
+			type: ErrorType.Internal,
+			message: "Unexpected end of output",
+			token: { line: 0, col: -1 },
+		};
 	}
 
 	return nearleyParser.results[0];

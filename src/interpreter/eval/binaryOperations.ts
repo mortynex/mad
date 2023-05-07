@@ -1,3 +1,4 @@
+import { InterpreterError } from "../../errors.ts";
 import { BinaryOperator } from "../../lexer/tokens.ts";
 import { BinaryOperation } from "../../parser/ast.ts";
 import { Scope } from "../scope/scope.ts";
@@ -13,39 +14,38 @@ export const evalBinaryOperation: EvaluateFunction<BinaryOperation> = (
 	const right = evaluate(scope, operation.right);
 
 	if (!left?.type || left?.type !== right?.type) {
-		throw new Error(
+		throw new InterpreterError(
+			operation,
 			"cannot perform binary operation on two different value types"
 		);
 	}
 
 	const type = left.type;
-	const operator = operation.operator;
-
 	switch (type) {
 		case ValueType.Number:
 			return handleNumberBinaryOperation(
 				left as NumberValue,
 				right as NumberValue,
-				operator
+				operation
 			);
 		case ValueType.String:
 			return handleStringBinaryOperation(
 				left as StringValue,
 				right as StringValue,
-				operator
+				operation
 			);
 
 		default:
-			throw new Error("invalid use of binary operator");
+			throw new InterpreterError(operation, "invalid use of binary operator");
 	}
 };
 
 const handleNumberBinaryOperation = (
 	left: NumberValue,
 	right: NumberValue,
-	operator: BinaryOperator
+	stmt: BinaryOperation
 ): NumberValue => {
-	switch (operator) {
+	switch (stmt.operator) {
 		case BinaryOperator.Addition:
 			return mkNumber(left.value + right.value);
 
@@ -62,20 +62,26 @@ const handleNumberBinaryOperation = (
 			return mkNumber(left.value % right.value);
 
 		default:
-			throw new Error(`Cannot use operator "${operator}" on number values`);
+			throw new InterpreterError(
+				stmt,
+				`Cannot use operator "${stmt.operator}" on number values`
+			);
 	}
 };
 
 const handleStringBinaryOperation = (
 	left: StringValue,
 	right: StringValue,
-	operator: BinaryOperator
+	stmt: BinaryOperation
 ): StringValue => {
-	switch (operator) {
+	switch (stmt.operator) {
 		case BinaryOperator.Addition:
 			return mkString(left.value + right.value);
 
 		default:
-			throw new Error(`Cannot use operator "${operator}" on string values`);
+			throw new InterpreterError(
+				stmt,
+				`Cannot use operator "${stmt.operator}" on string values`
+			);
 	}
 };
