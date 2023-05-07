@@ -1,6 +1,5 @@
 import moo from "npm:moo";
-import { BinaryOperator } from "../constants.ts";
-import { Token, TokenTypes } from "./tokens.ts";
+import { Token, TokenTypes, BinaryOperator } from "./tokens.ts";
 
 export interface Lexer {
 	reset: (chunk: string, info: any) => void;

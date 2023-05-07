@@ -14,11 +14,7 @@ export const evalProgram = (
 	let result: Value = mkNull();
 
 	for (const stmt of program.body) {
-		const value = evaluate(childScope, stmt);
-
-		if (value) {
-			result = value;
-		}
+		evaluate(childScope, stmt);
 	}
 
 	return result;

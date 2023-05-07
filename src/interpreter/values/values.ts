@@ -1,12 +1,12 @@
 import { Statement } from "../../parser/ast.ts";
 
 export enum ValueType {
-	Number = "[Number]",
-	Function = "[Function]",
-	NativeFunction = "[Native Function]",
-	String = "[String]",
-	Boolean = "[Boolean]",
-	Null = "[Null]",
+	Number = "num",
+	Function = "[function]",
+	NativeFunction = "[native function]",
+	String = "str",
+	Boolean = "bool",
+	Null = "null",
 }
 
 export interface Value {
@@ -34,9 +34,11 @@ export interface NullValue extends Value {
 
 export interface FunctionValue extends Value {
 	type: ValueType.Function;
+	params: string[];
 	body: Statement[];
 }
 
 export interface NativeFunctionValue extends Value {
 	type: ValueType.NativeFunction;
+	run: (args: Value[]) => Value;
 }

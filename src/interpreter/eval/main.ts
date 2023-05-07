@@ -1,5 +1,6 @@
 import {
 	BinaryOperation,
+	FunctionCall,
 	Identifier,
 	NumberLiteral,
 	Statement,
@@ -11,6 +12,7 @@ import {
 import { Scope } from "../scope/scope.ts";
 import { Value } from "../values/values.ts";
 import { evalBinaryOperation } from "./binaryOperations.ts";
+import { evalFunctionCall } from "./functions.ts";
 import {
 	evalIdentifier,
 	evalNumberLiteral,
@@ -45,6 +47,9 @@ export const evaluate: EvaluateFunction = (scope: Scope, stmt: Statement) => {
 
 		case StatementTypes.VariableAssignment:
 			return evalVariableAssignment(scope, stmt as VariableAssignment);
+
+		case StatementTypes.FunctionCall:
+			return evalFunctionCall(scope, stmt as FunctionCall);
 
 		default:
 			throw new Error(

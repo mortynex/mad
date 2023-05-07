@@ -1,4 +1,4 @@
-import { BinaryOperator } from "../constants.ts";
+import { BinaryOperator } from "../lexer/tokens.ts";
 
 export enum StatementTypes {
 	Program,

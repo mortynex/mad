@@ -10,7 +10,7 @@ export abstract class AddOnSymbol {
 	): {
 		rules: NearleyRule[];
 		name: string;
-	} 
+	};
 
 	protected generateName(name: string, orderNumber: number) {
 		return `${name}$ebnf$${orderNumber.toString()}`;
@@ -29,7 +29,7 @@ export class OptionalSymbol extends AddOnSymbol {
 			name,
 			rules: [
 				{
-					postprocess: () => symbol,
+					postprocess: (sym: any) => sym,
 					name,
 					symbols: [symbol],
 				},
@@ -102,7 +102,6 @@ export class ZeroOrMoreSymbol extends AddOnSymbol {
 		};
 	}
 }
-
 
 export const OPTIONAL = (symbol: BaseSymbol) => {
 	return new OptionalSymbol(symbol);

@@ -35,3 +35,11 @@ export interface Token {
 	line: number;
 	col: number;
 }
+
+export enum BinaryOperator {
+	Addition = "+",
+	Substraction = "-",
+	Multiplication = "*",
+	Division = "/",
+	Modulo = "%",
+}

@@ -23,11 +23,11 @@ export const evalIdentifier: EvaluateFunction<Identifier> = (
 	scope: Scope,
 	token: Identifier
 ) => {
-	const value = scope.resolve(token);
+	const record = scope.resolve(token);
 
-	if (!value) {
+	if (!record) {
 		throw new Error("use of undefined variable");
 	}
 
-	return value;
+	return record.value;
 };

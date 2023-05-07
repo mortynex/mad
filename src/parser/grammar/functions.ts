@@ -1,5 +1,5 @@
 import { TokenTypes } from "../../lexer/tokens.ts";
-import { StatementTypes } from "../ast.ts";
+import { FunctionCall, StatementTypes } from "../ast.ts";
 import { OPTIONAL } from "../cfg/AddOns.ts";
 import { rules, id, at } from "./main.ts";
 
@@ -10,12 +10,12 @@ rules.FunctionCall(
 		TokenTypes.LParen,
 		rules._,
 		OPTIONAL(rules.FunctionCallArgs),
-		OPTIONAL(rules._),
+		rules._,
 		TokenTypes.RParen,
 	],
-	(id, __, ___, ____, args) => ({
+	(id, __, ___, ____, args): FunctionCall => ({
 		type: StatementTypes.FunctionCall,
-		name: id.name,
+		id,
 		args,
 	})
 );

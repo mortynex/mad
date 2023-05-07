@@ -1,61 +1,20 @@
 import { evalProgram } from "./interpreter/eval/program.ts";
 import { createGlobalScope } from "./interpreter/scope/globalScope.ts";
 import { parse } from "./parser/parser.ts";
-const options = {
-	showOnlyTokens: false,
-	showOnlyAST: false,
-};
+import { startREPL } from "./repl/repl.ts";
+import options from "./options.json" assert { type: "json" };
+import { runFromString, runRepl } from "./run.ts";
 
-const startREPL = (processor: (input: string) => any) => {
-	while (true) {
-		const code = prompt("-> ");
+if (Deno.args.length === 0) {
+	if (Deno.args[0].toLowerCase() === "--repl") {
+		runRepl();
+	} else if (
+		options.extensions.some((extension) =>
+			Deno.args[0].endsWith(`.${extension}`)
+		)
+	) {
+		const code = await Deno.readTextFile(Deno.args[0]);
 
-		if (!code) {
-			continue;
-		}
-
-		if (code?.startsWith(";")) {
-			switch (code.slice(1).toLowerCase()) {
-				case "cls":
-					console.log("\n".repeat(100));
-
-					break;
-
-				case "tokens":
-					options.showOnlyTokens = !options.showOnlyTokens;
-
-					break;
-
-				case "ast":
-					options.showOnlyAST = !options.showOnlyAST;
-					options.showOnlyTokens = false;
-
-					break;
-			}
-
-			continue;
-		}
-
-		let result: any = null;
-
-		try {
-			result = processor(code);
-		} catch (e) {
-			console.error(e);
-
-			continue;
-		}
-
-		console.log(result);
+		runFromString(code);
 	}
-};
-
-const scope = createGlobalScope();
-
-startREPL((code: string) => {
-	const program = parse(code);
-
-	const result = evalProgram(scope, program, false);
-
-	console.log(result);
-});
+}

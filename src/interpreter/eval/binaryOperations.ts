@@ -1,4 +1,4 @@
-import { BinaryOperator } from "../../constants.ts";
+import { BinaryOperator } from "../../lexer/tokens.ts";
 import { BinaryOperation } from "../../parser/ast.ts";
 import { Scope } from "../scope/scope.ts";
 import { mkNumber, mkString } from "../values/factories.ts";

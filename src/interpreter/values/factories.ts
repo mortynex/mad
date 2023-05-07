@@ -31,3 +31,10 @@ export const mkFalse = () => mkBoolean(false);
 export const mkTrue = () => mkBoolean(true);
 
 export const mkNull = (): NullValue => ({ type: ValueType.Null });
+
+export const mkNativeFunction = (runFunction: (...args: any[]) => any) => {
+	return {
+		type: ValueType.NativeFunction,
+		run: runFunction,
+	};
+};
