@@ -1,3 +1,4 @@
+import "./grammar/functions.ts";
 import "./grammar/binary_operations.ts";
 import "./grammar/expressions.ts";
 import "./grammar/helpers.ts";

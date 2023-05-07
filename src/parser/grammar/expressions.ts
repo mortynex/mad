@@ -11,11 +11,11 @@ rules.Expression([rules.Addition], id);
 
 // goes through addition to correctly parse binary operations
 
-rules.Basic([rules.NumberLiteral], id);
-rules.Basic([rules.StringLiteral], id);
-rules.Basic([rules.Identifier], id);
-rules.Basic([rules.VariableAssignment], id);
-rules.Basic([rules.Parens], id);
+rules.$Basic([rules.NumberLiteral], id);
+rules.$Basic([rules.StringLiteral], id);
+rules.$Basic([rules.Identifier], id);
+rules.$Basic([rules.VariableAssignment], id);
+rules.$Basic([rules.Parens], id);
 
 rules.Parens(
 	[TokenTypes.LParen, rules._, rules.Expression, rules._, TokenTypes.RParen],

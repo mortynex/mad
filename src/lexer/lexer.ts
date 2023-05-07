@@ -41,6 +41,5 @@ export const lexer: Lexer = moo.compile({
 			[TokenTypes.VariableDeclarationKeyword]: "let",
 		}),
 	},
-	[TokenTypes.NL]: { match: /\n/, lineBreaks: true },
-	[TokenTypes.NoMatch]: { error: true },
+	[TokenTypes.NL]: { match: /\r\n/, lineBreaks: true },
 });

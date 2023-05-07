@@ -3,16 +3,14 @@ import { BaseSymbol, NearleyRule, NearleySymbol, Processor } from "./types.ts";
 export abstract class AddOnSymbol {
 	constructor(public symbol: BaseSymbol) {}
 
-	transform(
+	abstract transform(
 		name: string,
 		symbol: NearleySymbol,
 		addOnNumber: number
 	): {
 		rules: NearleyRule[];
 		name: string;
-	} {
-		throw new Error("transform handler not initalized");
-	}
+	} 
 
 	protected generateName(name: string, orderNumber: number) {
 		return `${name}$ebnf$${orderNumber.toString()}`;
@@ -104,6 +102,7 @@ export class ZeroOrMoreSymbol extends AddOnSymbol {
 		};
 	}
 }
+
 
 export const OPTIONAL = (symbol: BaseSymbol) => {
 	return new OptionalSymbol(symbol);

@@ -17,5 +17,9 @@ export const parse = (text: string) => {
 		console.warn("Ambigius grammar detected");
 	}
 
+	if (nearleyParser.results.length === 0) {
+		throw new Error("Unexpected end of input");
+	}
+
 	return nearleyParser.results[0];
 };

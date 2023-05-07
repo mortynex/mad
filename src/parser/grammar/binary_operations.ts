@@ -32,7 +32,7 @@ rules.Addition([rules.Multiplication], id);
 
 rules.Multiplication(
 	[
-		rules.Basic,
+		rules.$Basic,
 		rules._,
 		TokenTypes.BinaryMultiplicationOperator,
 		rules._,
@@ -40,4 +40,4 @@ rules.Multiplication(
 	],
 	BinaryAdditionProcessor
 );
-rules.Multiplication([rules.Basic], id);
+rules.Multiplication([rules.$Basic], id);

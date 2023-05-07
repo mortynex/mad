@@ -8,6 +8,8 @@ export enum StatementTypes {
 	VariableAssignment,
 	VariableDeclaration,
 	StringLiteral,
+	FunctionCall,
+	FunctionDeclaration,
 }
 
 export interface Statement {
@@ -55,4 +57,17 @@ export interface BinaryOperation extends Expression {
 	left: Expression;
 	right: Expression;
 	operator: BinaryOperator;
+}
+
+export interface FunctionCall extends Expression {
+	type: StatementTypes.FunctionCall;
+	id: Identifier;
+	args: Expression[];
+}
+
+export interface FunctionDeclaration extends Statement {
+	type: StatementTypes.FunctionDeclaration;
+	id: Identifier;
+	args: Identifier[];
+	body: Statement[];
 }
