@@ -6,4 +6,4 @@ let c = a + b
 
 a = 5
 
-print
+print (a)

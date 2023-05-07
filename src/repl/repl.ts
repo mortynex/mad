@@ -1,6 +1,9 @@
-export const startREPL = (processor: (input: string) => any) => {
+export const startREPL = (
+	promptText: string,
+	processor: (input: string) => any
+) => {
 	while (true) {
-		const code = prompt("-> ");
+		const code = prompt(promptText);
 
 		if (!code) {
 			continue;
@@ -26,7 +29,5 @@ export const startREPL = (processor: (input: string) => any) => {
 
 			continue;
 		}
-
-		console.log(result);
 	}
 };

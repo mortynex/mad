@@ -1,5 +1,6 @@
 import { evalProgram } from "./interpreter/eval/program.ts";
 import { createGlobalScope } from "./interpreter/scope/globalScope.ts";
+import { transformValue } from "./interpreter/values/transformers.ts";
 import { parse } from "./parser/parser.ts";
 import { startREPL } from "./repl/repl.ts";
 
@@ -14,11 +15,11 @@ export async function runFromString(code: string) {
 export function runRepl() {
 	const scope = createGlobalScope();
 
-	startREPL((code: string) => {
+	startREPL("(╬ ಠ益ಠ) ?? >", (code: string) => {
 		const program = parse(code);
 
 		const result = evalProgram(scope, program, false);
 
-		console.log(result);
+		console.log(`>> ${transformValue(result)}\n`);
 	});
 }

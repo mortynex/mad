@@ -9,6 +9,11 @@ export enum ValueType {
 	Null = "null",
 }
 
+export enum Booleans {
+	True = "true",
+	False = "false",
+}
+
 export interface Value {
 	type: ValueType;
 }

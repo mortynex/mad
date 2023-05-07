@@ -11,11 +11,11 @@ export const evalProgram = (
 ) => {
 	const childScope = createNewScope ? scope.createChildScope() : scope;
 
-	let result: Value = mkNull();
+	let result: Value | null = null;
 
 	for (const stmt of program.body) {
-		evaluate(childScope, stmt);
+		result = evaluate(childScope, stmt);
 	}
 
-	return result;
+	return result ?? mkNull();
 };

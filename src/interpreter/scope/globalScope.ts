@@ -1,6 +1,7 @@
 import { Identifier, StatementTypes } from "../../parser/ast.ts";
 import { mkFalse, mkNativeFunction, mkTrue } from "../values/factories.ts";
-import { Value } from "../values/values.ts";
+import { transformValue } from "../values/transformers.ts";
+import { Booleans, Value } from "../values/values.ts";
 import { ScopeRecord } from "./record.ts";
 import { Scope } from "./scope.ts";
 
@@ -19,12 +20,14 @@ export const createGlobalScope = () => {
 		);
 	};
 
-	assignGlobalVariable("false", mkFalse());
-	assignGlobalVariable("true", mkTrue());
+	assignGlobalVariable(Booleans.False, mkFalse());
+	assignGlobalVariable(Booleans.True, mkTrue());
 
 	assignGlobalVariable(
 		"print",
-		mkNativeFunction((...args: any[]) => console.log(...args))
+		mkNativeFunction((args: Value[]) => {
+			console.log(...args.map(transformValue));
+		})
 	);
 
 	return scope;

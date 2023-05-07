@@ -62,7 +62,7 @@ const handleNumberBinaryOperation = (
 			return mkNumber(left.value % right.value);
 
 		default:
-			throw new Error("invalid number operation");
+			throw new Error(`Cannot use operator "${operator}" on number values`);
 	}
 };
 
@@ -76,6 +76,6 @@ const handleStringBinaryOperation = (
 			return mkString(left.value + right.value);
 
 		default:
-			throw new Error("invalid number operation");
+			throw new Error(`Cannot use operator "${operator}" on string values`);
 	}
 };

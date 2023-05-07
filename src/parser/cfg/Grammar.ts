@@ -50,7 +50,7 @@ export class Grammar<ProcessorReturnType extends any> {
 				},
 				get(target, prop, receiver) {
 					if (prop !== "symbol") {
-						return;
+						return null;
 					}
 
 					const rule: RuleID = {
@@ -84,6 +84,7 @@ export class Grammar<ProcessorReturnType extends any> {
 
 	buildGrammar(lexer: Lexer): NearleyGrammar {
 		if (!this.startingRuleId) {
+			// set the first rule as the starting rule if there is no defined starting rule
 			this.startingRuleId = this.rules.keys().next().value;
 
 			if (!this.startingRuleId) {
@@ -94,10 +95,6 @@ export class Grammar<ProcessorReturnType extends any> {
 		const ParserStart: string = this.startingRuleId as string;
 
 		const ParserRules = this.buildRules();
-
-		console.log(ParserRules, {
-			ParserStart,
-		});
 
 		return {
 			Lexer: lexer,
@@ -179,6 +176,7 @@ export class Grammar<ProcessorReturnType extends any> {
 			}
 		}
 
+		// check if grammar uses rule that hasn't been defined
 		for (const usedRule of usedRules.values()) {
 			if (!definedRules.has(usedRule)) {
 				throw new Error("Grammar references undefined rule");

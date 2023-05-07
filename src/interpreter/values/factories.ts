@@ -1,8 +1,10 @@
 import {
+	Booleans,
 	BooleanValue,
 	NullValue,
 	NumberValue,
 	StringValue,
+	Value,
 	ValueType,
 } from "./values.ts";
 
@@ -32,7 +34,7 @@ export const mkTrue = () => mkBoolean(true);
 
 export const mkNull = (): NullValue => ({ type: ValueType.Null });
 
-export const mkNativeFunction = (runFunction: (...args: any[]) => any) => {
+export const mkNativeFunction = (runFunction: (args: Value[]) => any) => {
 	return {
 		type: ValueType.NativeFunction,
 		run: runFunction,
