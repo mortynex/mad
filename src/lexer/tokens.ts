@@ -22,7 +22,7 @@ export enum TokenTypes {
 	FunctionKeyword,
 	ReturnKeyword,
 
-	// whitespaces\
+	// whitespaces
 	WS,
 	NL,
 	// special tokens

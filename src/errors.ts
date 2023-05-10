@@ -28,6 +28,7 @@ const FACES = [
 	">o<",
 	"눈_눈",
 	"´･_･`",
+	"<_<",
 ];
 
 const getRandomASCIIFace = () => {
