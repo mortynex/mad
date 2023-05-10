@@ -18,7 +18,7 @@ export const evalVariableDeclaration: EvaluateFunction<VariableDeclaration> = (
 		);
 	}
 
-	scope.assign(id, new ScopeRecord(evaluate(scope, value), { mutable: false }));
+	scope.assign(id, new ScopeRecord(evaluate(scope, value), { mutable: true }));
 
 	return mkNull();
 };
