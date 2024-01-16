@@ -17,4 +17,4 @@ Projekt je rozdělen na **lexer**, **parser** a **interpreter**
 - hodnotové typy jako řetězce, čísla, boolean a null
 - REPL či čtení souborů
 
-### [Odkaz na dokumentaci](documentatace.md)
+### [Odkaz na dokumentaci](documentace.md)
