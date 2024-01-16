@@ -16,3 +16,5 @@ Projekt je rozdělen na **lexer**, **parser** a **interpreter**
 - funkce s argumentama
 - hodnotové typy jako řetězce, čísla, boolean a null
 - REPL či čtení souborů
+
+## [Odkaz na dokumentaci](documentation.md)
